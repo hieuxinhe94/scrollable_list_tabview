@@ -23,7 +23,8 @@ class ScrollableListTabView extends StatefulWidget {
       this.tabAnimationDuration = _kScrollDuration,
       this.bodyAnimationDuration = _kScrollDuration,
       this.tabAnimationCurve = Curves.decelerate,
-      this.bodyAnimationCurve = Curves.decelerate})
+      this.bodyAnimationCurve = Curves.decelerate,
+      this.displaySectionLabel})
       : assert(tabAnimationDuration != null, bodyAnimationDuration != null),
         assert(tabAnimationCurve != null, bodyAnimationCurve != null),
         assert(tabHeight != null),
@@ -35,6 +36,8 @@ class ScrollableListTabView extends StatefulWidget {
 
   /// Height of the tab at the top of the view.
   final double tabHeight;
+
+  final bool displaySectionLabel;
 
   /// Duration of tab change animation.
   final Duration tabAnimationDuration;
@@ -88,33 +91,43 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
                         ? tab.activeBackgroundColor
                         : Theme.of(context).dividerColor;
                     return Container(
-                      height: 32,
-                      margin: _kTabMargin,
-                      decoration: BoxDecoration(
-                          color: selected
-                              ? tab.activeBackgroundColor
-                              : tab.inactiveBackgroundColor,
-                          borderRadius: tab.borderRadius),
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all(
-                                selected ? Colors.white : Colors.grey),
-                            backgroundColor: MaterialStateProperty.all(selected
+                        height: 32,
+                        margin: _kTabMargin,
+                        decoration: BoxDecoration(
+                            color: selected
                                 ? tab.activeBackgroundColor
-                                : tab.inactiveBackgroundColor),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            side: MaterialStateProperty.all(BorderSide(
-                              width: 1,
-                              color: borderColor,
-                            )),
-                            elevation: MaterialStateProperty.all(0),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: tab.borderRadius))),
-                        child: _buildTab(index),
-                        onPressed: () => _onTabPressed(index),
-                      ),
-                    );
+                                : tab.inactiveBackgroundColor,
+                            borderRadius: tab.borderRadius),
+                        child: InkWell(
+                          onTap: () => _onTabPressed(index),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                //color: borderColor
+                                ),
+                            child: _buildTab(index, borderColor),
+                          ),
+                        )
+                        // OutlinedButton(
+                        //   style: ButtonStyle(
+                        //       foregroundColor: MaterialStateProperty.all(
+                        //           selected ? Colors.white : Colors.grey),
+                        //       backgroundColor: MaterialStateProperty.all(selected
+                        //           ? tab.activeBackgroundColor
+                        //           : tab.inactiveBackgroundColor),
+                        //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        //       side: MaterialStateProperty.all(BorderSide(
+                        //         width: 1,
+                        //         color: borderColor,
+                        //       )),
+                        //       elevation: MaterialStateProperty.all(0),
+                        //       shape: MaterialStateProperty.all(
+                        //           RoundedRectangleBorder(
+                        //               borderRadius: tab.borderRadius))),
+
+                        //   child: _buildTab(index),
+                        //   onPressed: () => _onTabPressed(index),
+                        //),
+                        );
                   });
             },
           ),
@@ -128,10 +141,12 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: _kTabMargin.add(const EdgeInsets.all(5.0)),
-                  child: _buildInnerTab(index),
-                ),
+                widget.displaySectionLabel == true
+                    ? Padding(
+                        padding: _kTabMargin.add(const EdgeInsets.all(5.0)),
+                        child: _buildInnerTab(index),
+                      )
+                    : Container(),
                 Flexible(
                   child: widget.tabs[index].body,
                 )
@@ -170,7 +185,7 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
     );
   }
 
-  Widget _buildTab(int index) {
+  Widget _buildTab(int index, Color color) {
     var tab = widget.tabs[index].tab;
     if (tab.icon == null) return tab.label;
     return Row(
