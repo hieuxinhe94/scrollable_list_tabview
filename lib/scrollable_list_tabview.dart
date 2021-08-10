@@ -87,9 +87,9 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
                   valueListenable: _index,
                   builder: (_, i, __) {
                     var selected = index == i;
-                    var borderColor = selected
-                        ? tab.activeBackgroundColor
-                        : Theme.of(context).dividerColor;
+                    // var borderColor = selected
+                    //     ? tab.activeBackgroundColor
+                    //     : Theme.of(context).dividerColor;
                     return Container(
                         height: 32,
                         margin: _kTabMargin,
@@ -104,7 +104,7 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
                             decoration: BoxDecoration(
                                 //color: borderColor
                                 ),
-                            child: _buildTab(index, borderColor),
+                            child: _buildTab(index, selected),
                           ),
                         )
                         // OutlinedButton(
@@ -144,7 +144,7 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
                 widget.displaySectionLabel == true
                     ? Padding(
                         padding: _kTabMargin.add(const EdgeInsets.all(5.0)),
-                        child: _buildInnerTab(index),
+                        child: _buildInnerTab(index, false),
                       )
                     : Container(),
                 Flexible(
@@ -158,7 +158,20 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
     );
   }
 
-  Widget _buildInnerTab(int index) {
+  Widget buildTab(String label, TextStyle textStyle) {
+    return Container(
+        margin: EdgeInsets.only(left: 20, right: 20),
+        child: Center(
+          child: Text(
+            label,
+            style: textStyle,
+          ),
+        )
+        //decoration: BoxDecoration(color: Constants.white),
+        );
+  }
+
+  Widget _buildInnerTab(int index, bool isActive) {
     var tab = widget.tabs[index].tab;
     var textStyle = Theme.of(context)
         .textTheme
@@ -166,9 +179,17 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
         .copyWith(fontWeight: FontWeight.w500);
     return Builder(
       builder: (_) {
-        if (tab.icon == null) return tab.label;
+        if (tab.icon == null)
+          return buildTab(tab.labelText,
+              isActive ? tab.activeLabelTextStyle : tab.inactiveLabelTextStyle);
         if (!tab.showIconOnList)
-          return DefaultTextStyle(style: textStyle, child: tab.label);
+          return DefaultTextStyle(
+              style: textStyle,
+              child: buildTab(
+                  tab.labelText,
+                  isActive
+                      ? tab.activeLabelTextStyle
+                      : tab.inactiveLabelTextStyle));
         return DefaultTextStyle(
           style: Theme.of(context)
               .textTheme
@@ -178,21 +199,36 @@ class _ScrollableListTabViewState extends State<ScrollableListTabView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            children: [tab.icon, _kSizedBoxW8, tab.label],
+            children: [
+              tab.icon,
+              _kSizedBoxW8,
+              buildTab(
+                  tab.labelText,
+                  isActive
+                      ? tab.activeLabelTextStyle
+                      : tab.inactiveLabelTextStyle)
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildTab(int index, Color color) {
+  Widget _buildTab(int index, bool isActive) {
     var tab = widget.tabs[index].tab;
-    if (tab.icon == null) return tab.label;
+    if (tab.icon == null)
+      return buildTab(tab.labelText,
+          isActive ? tab.activeLabelTextStyle : tab.inactiveLabelTextStyle);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
-      children: [tab.icon, _kSizedBoxW8, tab.label],
+      children: [
+        tab.icon,
+        _kSizedBoxW8,
+        buildTab(tab.labelText,
+            isActive ? tab.activeLabelTextStyle : tab.inactiveLabelTextStyle)
+      ],
     );
   }
 

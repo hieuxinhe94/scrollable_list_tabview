@@ -5,7 +5,7 @@ import 'package:scrollable_list_tabview/scrollable_list_tabview.dart';
 void main() {
   testWidgets('test', (tester) async {
     var listTab = ScrollableListTab(
-        tab: ListTab(label: Text('A label')),
+        tab: ListTab(labelText: 'A label'),
         body: ListView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -47,7 +47,7 @@ void main() {
   });
 
   test('Property test for tab models', () {
-    var tab = ListTab(label: Text('A label'));
+    var tab = ListTab(labelText: 'A label');
     var scrollableListTab = ScrollableListTab(
         tab: tab,
         body: ListView(
@@ -60,6 +60,6 @@ void main() {
     expect(tab.showIconOnList, false);
     expect(tab.icon, null);
     expect(tab.activeBackgroundColor, Colors.blue);
-    expect(((tab.label) as Text).data, 'A label');
+    expect(tab.labelText, 'A label');
   });
 }

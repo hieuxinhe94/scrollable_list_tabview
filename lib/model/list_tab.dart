@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
+enum TabDisplayType { Basic, OutlineButton }
+
 class ListTab {
   /// Create a new [ListTab]
-  const ListTab(
-      {Key key,
-      this.icon,
-      @required this.label,
-      this.borderRadius = const BorderRadius.all(const Radius.circular(5.0)),
-      this.activeBackgroundColor = Colors.blue,
-      this.inactiveBackgroundColor = Colors.transparent,
-      this.showIconOnList = false,
-      this.borderColor = Colors.grey})
-      : assert(label != null),
+  const ListTab({
+    Key key,
+    this.icon,
+    @required this.labelText,
+    this.borderRadius = const BorderRadius.all(const Radius.circular(5.0)),
+    this.activeBackgroundColor = Colors.blue,
+    this.inactiveBackgroundColor = Colors.transparent,
+    this.showIconOnList = false,
+    this.borderColor = Colors.grey,
+    this.activeLabelTextStyle,
+    this.inactiveLabelTextStyle,
+  })  : assert(labelText != null),
         assert(borderRadius != null),
         assert(activeBackgroundColor != null),
         assert(inactiveBackgroundColor != null),
@@ -22,7 +26,13 @@ class ListTab {
   final Widget icon;
 
   /// Label to be shown in the tab, must be non-null.
-  final Widget label;
+  final String labelText;
+
+  /// Color to be shown in the tab, must be non-null.
+  final TextStyle activeLabelTextStyle;
+
+  /// Color to be shown in the tab, must be non-null.
+  final TextStyle inactiveLabelTextStyle;
 
   /// [BorderRadius] for the a tab at the bottom tab view.
   /// This won't affect the tab in the scrollable list.
